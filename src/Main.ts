@@ -1,3 +1,6 @@
+import { Scene } from "./egre-unity/Scene";
+import { MyImageObject } from "./MyImageObject";
+
 //////////////////////////////////////////////////////////////////////////////////////
 //
 //  Copyright (c) 2014-present, Egret Technology.
@@ -59,12 +62,12 @@ class Main extends eui.UILayer {
 
     private async runGame() {
         await this.loadResource()
-        this.createGameScene();
+ //       this.createGameScene();
         const result = await RES.getResAsync("description_json")
         await platform.login();
         const userInfo = await platform.getUserInfo();
         console.log(userInfo);
-
+        this.createAndStart();
     }
 
     private async loadResource() {
@@ -93,27 +96,10 @@ class Main extends eui.UILayer {
         })
     }
 
-    private createBitmapByName(name: string): egret.Bitmap {
-        let result = new egret.Bitmap();
-        let texture: egret.Texture = RES.getRes(name);
-        result.texture = texture;
-        return result;
-    }
-
-    //ゲームシーンの生成
-    protected createGameScene(): void {
-
-        const timer:egret.Timer = new egret.Timer(2000,-1);
-        timer.addEventListener(egret.TimerEvent.TIMER,this.create,this);
-        timer.start();
-
-    }
-
-    //画像を生成
-    private create(){
-        const createImage :CreateImage = new CreateImage();
-        this.addChild(createImage);
-
+    private createAndStart() {
+        const scene = new Scene(this);
+        scene.add(new MyImageObject());
+        egret.startTick(() => { scene.doFrame(); return true; }, this);
     }
 
 }
